@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HKJC public GraphQL football odds monitor. Python 3.12, standard library.
+"""HKJC public GraphQL football odds monitor v1.7. Python 3.12, standard library.
 
 Reads HAD (1X2), HDC (handicap), HIL (over/under) before kick-off.
 This is an unofficial, read-only experiment, not a supported HKJC data service.
@@ -31,7 +31,7 @@ MARKET_REQUESTS = {
     "HIL": ("HIL", "EHL"),
 }
 PAGE_SIZE = 60
-MAX_PAGES = 3
+MAX_PAGES = 1  # Official browser request is 1..60; 61..120 returned HTTP 400 in real Actions
 DAYS_AHEAD = 2  # today plus tomorrow, filtered locally after unfiltered official query
 MAX_HISTORY = 30000
 
@@ -127,7 +127,7 @@ def graphql_request(market, start_index):
         "Accept-Language": "zh-HK,zh;q=0.9",
         "Cache-Control": "no-cache",
         "Referer": "https://bet.hkjc.com/",
-        "User-Agent": "OddsHistoryResearch/1.6 (read-only public data)",
+        "User-Agent": "OddsHistoryResearch/1.7 (read-only public data)",
     }, method="GET")
     try:
         with urllib.request.urlopen(req, timeout=30) as res:
@@ -187,6 +187,8 @@ def fetch_all_matches():
                         saved_pools.append(pool)
             if len(chunk) < PAGE_SIZE:
                 break
+    if MAX_PAGES == 1:
+        print("COVERAGE NOTE: requests 1..60 per market only; later fixtures may be omitted.", flush=True)
     dates = {hkt_date() + timedelta(days=i) for i in range(DAYS_AHEAD)}
     selected = []
     unknown_time = 0
