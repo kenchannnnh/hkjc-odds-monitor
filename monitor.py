@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """HKJC public GraphQL football odds monitor. Python 3.12, standard library.
 
@@ -113,8 +114,16 @@ def graphql_request(start_index):
         with urllib.request.urlopen(req, timeout=30) as res:
             obj = json.loads(res.read().decode("utf-8"))
     except urllib.error.HTTPError as err:
+        # Log a short, readable response body so GitHub Actions reveals why
+        # HKJC rejected the request (for example, GraphQL argument errors).
+        # Never log request headers, account credentials, or the full URL.
         retry = err.headers.get("Retry-After") or "unknown"
-        raise RuntimeError(f"HKJC HTTP {err.code}; Retry-After={retry}. Stopping (no bypass).") from err
+        detail = err.read(4096).decode("utf-8", errors="replace")
+        detail = " ".join(detail.split())[:1500] or "(empty response body)"
+        raise RuntimeError(
+            f"HKJC HTTP {err.code}; Retry-After={retry}; Response: {detail}. "
+            "Stopping (no bypass)."
+        ) from err
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as err:
         raise RuntimeError(f"HKJC response/network error: {err}") from err
     if not isinstance(obj, dict) or obj.get("errors"):
@@ -250,6 +259,12 @@ def run():
         if rows:
             state["matches"][meta["id"]] = meta
             fresh.extend(rows)
+    # Never replace a previous dataset with an empty result. This also
+    # preserves the original Tipsme file until we have real GraphQL quotes.
+    if not fresh:
+        raise RuntimeError(
+            "No usable HKJC odds returned; existing data.json preserved."
+        )
     added = add_changes(state, fresh)
     state["generated_at"] = iso(utcnow())
     state["runs"].append({"time": state["generated_at"], "requests": nreq,
