@@ -1,10 +1,9 @@
-name: HKJC odds monitor
+name: HKJC GraphQL odds monitor
 
 on:
   workflow_dispatch:
   schedule:
-    # GitHub uses UTC. Every two hours; GitHub may delay or occasionally skip runs.
-    - cron: '17 */2 * * *'
+    - cron: '17 */2 * * *' # every 2 hours, UTC; runs may be delayed/skipped
 
 permissions:
   contents: write
@@ -12,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: hkjc-monitor
+  group: hkjc-graphql-monitor
   cancel-in-progress: false
 
 jobs:
@@ -21,31 +20,28 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - name: Checkout data and code
+      - name: Check out repository
         uses: actions/checkout@v4
-      - name: Set up Python
+      - name: Install Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Collect HKJC odds
-        env:
-          TIPSME_API_KEY: ${{ secrets.TIPSME_API_KEY }}
+      - name: Collect public HKJC GraphQL odds
         run: python monitor.py
-      - name: Commit updated public history to repository
+      - name: Commit public odds history and legacy archive
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/data.json
+          git add -A docs/
           if ! git diff --cached --quiet; then
-            git commit -m 'Update sampled public HKJC odds history'
+            git commit -m 'Update HKJC GraphQL odds history'
             git push
           fi
-      - name: Configure Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload Pages content
+      - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
       - name: Publish website
-        id: deployment
         uses: actions/deploy-pages@v4
