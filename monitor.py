@@ -11,6 +11,7 @@ import sys
 import time
 import math
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -18,126 +19,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 DATA_PATH = ROOT / "docs" / "data.json"
 ARCHIVE_PATH = ROOT / "docs" / "tipsme-archive.json"
-ENDPOINT = "https://info.cld.hkjc.com/graphql/base/"
+ENDPOINT = "https://info.cld.hkjc.com/graphql/base-get/"
 HKT = timezone(timedelta(hours=8))
 MARKETS = ("HAD", "HDC", "HIL")
 PAGE_SIZE = 60
-MAX_PAGES_PER_DAY = 3
-DAYS_AHEAD = 2  # today plus tomorrow (HKT)
+MAX_PAGES = 3
+DAYS_AHEAD = 2  # today plus tomorrow, filtered locally after unfiltered official query
 MAX_HISTORY = 30000
 
-# Copy of the public hkjc-api footballMatchesQuery (matchList) query template.
-# NOTE: HKJC may change its server-side whitelist; matching a public template
-# is not proof of access permission or live compatibility. Stop on errors.
-# Whitelist checking can include query text itself, not merely variables.
-QUERY = """
-query matchList($startIndex: Int, $endIndex: Int,$startDate: String, $endDate: String, $matchIds: [String], $tournIds: [String], $fbOddsTypes: [FBOddsType]!, $fbOddsTypesM: [FBOddsType]!, $inplayOnly: Boolean, $featuredMatchesOnly: Boolean, $frontEndIds: [String], $earlySettlementOnly: Boolean, $showAllMatch: Boolean) {
-    matches(startIndex: $startIndex,endIndex: $endIndex, startDate: $startDate, endDate: $endDate, matchIds: $matchIds, tournIds: $tournIds, fbOddsTypes: $fbOddsTypesM, inplayOnly: $inplayOnly, featuredMatchesOnly: $featuredMatchesOnly, frontEndIds: $frontEndIds, earlySettlementOnly: $earlySettlementOnly, showAllMatch: $showAllMatch) {
-      id
-      frontEndId
-      matchDate
-      kickOffTime
-      status
-      updateAt
-      sequence
-      esIndicatorEnabled
-      homeTeam {
-        id
-        name_en
-        name_ch
-      }
-      awayTeam {
-        id
-        name_en
-        name_ch
-      }
-      tournament {
-        id
-        frontEndId
-        nameProfileId
-        isInteractiveServiceAvailable
-        code
-        name_en
-        name_ch
-      }
-      isInteractiveServiceAvailable
-      inplayDelay
-      venue {
-        code
-        name_en
-        name_ch
-      }
-      tvChannels {
-        code
-        name_en
-        name_ch
-      }
-      liveEvents {
-        id
-        code
-      }
-      featureStartTime
-      featureMatchSequence
-      poolInfo {
-        normalPools
-        inplayPools
-        sellingPools
-        ntsInfo
-        entInfo
-        definedPools
-      }
-      runningResult {
-        homeScore
-        awayScore
-        corner
-        homeCorner
-        awayCorner
-      }
-      runningResultExtra {
-        homeScore
-        awayScore
-        corner
-        homeCorner
-        awayCorner
-      }
-      adminOperation {
-        remark {
-          typ
-        }
-      }
-      foPools(fbOddsTypes: $fbOddsTypes) {
-        id
-        status
-        oddsType
-        instNo
-        inplay
-        name_ch
-        name_en
-        updateAt
-        expectedSuspendDateTime
-        lines {
-          lineId
-          status
-          condition
-          main
-          combinations {
-            combId
-            str
-            status
-            offerEarlySettlement
-            currentOdds
-            selections {
-              selId
-              str
-              name_ch
-              name_en
-            }
-          }
-        }
-      }
-    }
-  }
-"""
+# MatchList query follows the official football page's user-captured GET
+# shape and field order. Unofficial read-only client; no guaranteed support.
+# Market codes differ from the captured HAD/EHA and require live verification.
+QUERY = 'query matchList($startIndex:Int$endIndex:Int$startDate:String$endDate:String$matchIds:[String]$tournIds:[String]$fbOddsTypes:[FBOddsType]!$fbOddsTypesM:[FBOddsType]!$inplayOnly:Boolean$featuredMatchesOnly:Boolean$frontEndIds:[String]$earlySettlementOnly:Boolean$showAllMatch:Boolean){matches(startIndex:$startIndex endIndex:$endIndex startDate:$startDate endDate:$endDate matchIds:$matchIds tournIds:$tournIds fbOddsTypes:$fbOddsTypesM inplayOnly:$inplayOnly featuredMatchesOnly:$featuredMatchesOnly frontEndIds:$frontEndIds earlySettlementOnly:$earlySettlementOnly showAllMatch:$showAllMatch){id frontEndId matchDate kickOffTime status updateAt sequence esIndicatorEnabled homeTeam{id name_en name_ch}awayTeam{id name_en name_ch}tournament{id frontEndId nameProfileId isInteractiveServiceAvailable code name_en name_ch}isInteractiveServiceAvailable inplayDelay venue{code name_en name_ch}tvChannels{code name_en name_ch}liveEvents{id code}featureStartTime featureMatchSequence poolInfo{normalPools inplayPools sellingPools ntsInfo entInfo definedPools ngsInfo{str name_en name_ch instNo}agsInfo{str name_en name_ch}}runningResult{homeScore awayScore corner homeCorner awayCorner}runningResultExtra{homeScore awayScore corner homeCorner awayCorner}adminOperation{remark{typ}}foPools(fbOddsTypes:$fbOddsTypes){id status oddsType instNo inplay name_ch name_en updateAt expectedSuspendDateTime lines{lineId status condition main combinations{combId str status offerEarlySettlement currentOdds selections{selId str name_ch name_en}}}}}}'
 
 
 def utcnow():
@@ -178,33 +71,44 @@ def load_state():
     return new_state(), old
 
 
-def graphql_request(start_date, start_index):
-    payload = {"operationName": "matchList", "query": QUERY,
-               "variables": {
-                   "startIndex": start_index,
-                   "endIndex": start_index + PAGE_SIZE - 1,
-                   "startDate": start_date,
-                   "endDate": start_date,
-                   "matchIds": None,
-                   "tournIds": None,
-                   "fbOddsTypes": list(MARKETS),
-                   "fbOddsTypesM": list(MARKETS),
-                   "inplayOnly": None,
-                   "featuredMatchesOnly": False,
-                   "frontEndIds": None,
-                   "earlySettlementOnly": False,
-                   "showAllMatch": False,
-               }}
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Accept-Language": "zh-HK,zh;q=0.9,en;q=0.8",
-        "Referer": "https://bet.hkjc.com/",
-        "User-Agent": "Mozilla/5.0 (compatible; OddsHistoryResearch/1.0)",
+def graphql_request(start_index):
+    # As captured from the HKJC football home page: GET /graphql/base-get/
+    # with a query-string GraphQL document and JSON-encoded variables.
+    # The observed page uses HAD/EHA; here we request our target HAD/HDC/HIL.
+    # Acceptance of the changed market list must be verified by a real run.
+    variables = {
+        "fbOddsTypes": list(MARKETS),
+        "fbOddsTypesM": list(MARKETS),
+        "inplayOnly": False,
+        "featuredMatchesOnly": False,
+        "startDate": None,
+        "endDate": None,
+        "tournIds": None,
+        "matchIds": None,
+        "tournId": None,
+        "tournProfileId": None,
+        "subType": None,
+        "startIndex": start_index,
+        "endIndex": start_index + PAGE_SIZE - 1,
+        "frontEndIds": None,
+        "earlySettlementOnly": False,
+        "showAllMatch": False,
+        "tday": None,
+        "tIdList": None,
     }
-    req = urllib.request.Request(ENDPOINT,
-        data=json.dumps(payload, separators=(",", ":")).encode("utf-8"),
-        headers=headers, method="POST")
+    params = urllib.parse.urlencode({
+        "query": QUERY,
+        "variables": json.dumps(variables, separators=(",", ":"), ensure_ascii=False),
+    })
+    url = ENDPOINT + "?" + params
+    headers = {
+        "Accept": "*/*",
+        "Accept-Language": "zh-HK,zh;q=0.9",
+        "Cache-Control": "no-cache",
+        "Referer": "https://bet.hkjc.com/",
+        "User-Agent": "OddsHistoryResearch/1.2 (read-only public data)",
+    }
+    req = urllib.request.Request(url, headers=headers, method="GET")
     try:
         with urllib.request.urlopen(req, timeout=30) as res:
             obj = json.loads(res.read().decode("utf-8"))
@@ -222,25 +126,34 @@ def graphql_request(start_date, start_index):
 
 
 def fetch_all_matches():
+    # Official page sends null for startDate/endDate. Fetch the first pages
+    # then restrict the displayed monitoring window in HK time locally.
     out = {}
-    dates = [hkt_date() + timedelta(days=i) for i in range(DAYS_AHEAD)]
     requests = 0
-    for d in dates:
-        date = d.isoformat()
-        for page in range(MAX_PAGES_PER_DAY):
-            start = 1 + page * PAGE_SIZE
-            chunk = graphql_request(date, start)
-            requests += 1
-            print(f"HKJC {date}, page {page+1}: {len(chunk)} matches")
-            for m in chunk:
-                if isinstance(m, dict) and m.get("id") is not None:
-                    out[str(m["id"])] = m
-            if len(chunk) < PAGE_SIZE:
-                break
-            # modest spacing; no aggressive polling
-            time.sleep(1.5)
-        time.sleep(1.5)
-    return list(out.values()), requests
+    for page in range(MAX_PAGES):
+        start = 1 + page * PAGE_SIZE
+        chunk = graphql_request(start)
+        requests += 1
+        print(f"HKJC GraphQL GET, page {page+1}: {len(chunk)} matches")
+        for m in chunk:
+            if isinstance(m, dict) and m.get("id") is not None:
+                out[str(m["id"])] = m
+        if len(chunk) < PAGE_SIZE:
+            break
+        if page < MAX_PAGES - 1:
+            time.sleep(1.5)  # conservative request spacing
+    dates = {hkt_date() + timedelta(days=i) for i in range(DAYS_AHEAD)}
+    selected = []
+    unknown_time = 0
+    for m in out.values():
+        ko = parse_datetime(m.get("kickOffTime"))
+        if ko is None:
+            unknown_time += 1
+            continue
+        if ko.astimezone(HKT).date() in dates:
+            selected.append(m)
+    print(f"Received {len(out)} fixtures; {len(selected)} in next {DAYS_AHEAD} HK dates; {unknown_time} unparseable kickoff times")
+    return selected, requests
 
 
 def txt(info):
