@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""HKJC public GraphQL football odds monitor v1.7. Python 3.12, standard library.
+"""HKJC public GraphQL football odds monitor v1.8. Python 3.12, standard library.
 
 Reads HAD (1X2), HDC (handicap), HIL (over/under) before kick-off.
 This is an unofficial, read-only experiment, not a supported HKJC data service.
 Never uses account credentials or bypasses access controls; stops on HTTP 403/429.
+An HTTP 400 on one market will not suppress successful quotes from other markets.
 """
 import gzip
 import json
@@ -31,7 +32,7 @@ MARKET_REQUESTS = {
     "HIL": ("HIL", "EHL"),
 }
 PAGE_SIZE = 60
-MAX_PAGES = 1  # Official browser request is 1..60; 61..120 returned HTTP 400 in real Actions
+MAX_PAGES = 1  # Official observed page is 1..60; 61..120 returned HTTP 400 in Actions
 DAYS_AHEAD = 2  # today plus tomorrow, filtered locally after unfiltered official query
 MAX_HISTORY = 30000
 
@@ -115,6 +116,15 @@ def make_variables(market, start_index):
     return variables
 
 
+class HKJCRequestError(RuntimeError):
+    """An HTTP response from HKJC. Used to stop on 403/429, not retry it."""
+
+    def __init__(self, market, status, detail):
+        self.market = market
+        self.status = status
+        super().__init__(f"HKJC {market} HTTP {status}; Response: {detail or '(empty)'}")
+
+
 def graphql_request(market, start_index):
     variables = make_variables(market, start_index)
     params = urllib.parse.urlencode({
@@ -127,7 +137,7 @@ def graphql_request(market, start_index):
         "Accept-Language": "zh-HK,zh;q=0.9",
         "Cache-Control": "no-cache",
         "Referer": "https://bet.hkjc.com/",
-        "User-Agent": "OddsHistoryResearch/1.7 (read-only public data)",
+        "User-Agent": "OddsHistoryResearch/1.8 (read-only public data)",
     }, method="GET")
     try:
         with urllib.request.urlopen(req, timeout=30) as res:
@@ -139,7 +149,7 @@ def graphql_request(market, start_index):
         except (OSError, UnicodeError, ValueError):
             detail = body.decode("utf-8", errors="replace")
         detail = " ".join(detail.split())[:1200]
-        raise RuntimeError(f"HKJC {market} HTTP {err.code}; Response: {detail or '(empty)'}; stopping (no bypass)") from err
+        raise HKJCRequestError(market, err.code, detail) from err
     except (urllib.error.URLError, TimeoutError, OSError, UnicodeError, ValueError) as err:
         raise RuntimeError(f"HKJC {market} response/network error: {err}") from err
     if not isinstance(obj, dict) or obj.get("errors"):
@@ -151,44 +161,54 @@ def graphql_request(market, start_index):
 
 
 def fetch_all_matches():
-    """Fetch each official market-page shape, then merge pools by match ID."""
+    """Read each official market separately; keep successful markets after HTTP 400.
+
+    A 403/429 always stops collection. Never retry a rejected request. At most
+    one captured 1..60 page is requested per market until pagination is verified.
+    """
     out = {}
     requests = 0
-    for market_index, market in enumerate(MARKETS):
-        if market_index:
+    status = {}
+    for index, market in enumerate(MARKETS):
+        if index:
             time.sleep(1.5)
-        for page in range(MAX_PAGES):
-            if page:
-                time.sleep(1.5)
-            start_index = 1 + page * PAGE_SIZE
-            chunk = graphql_request(market, start_index)
-            requests += 1
-            pool_count = sum(
-                1 for match in chunk if isinstance(match, dict)
-                for pool in (match.get("foPools") or [])
-                if isinstance(pool, dict) and pool.get("oddsType") == market
-            )
-            print(f"HKJC {market} GET page {page+1}: {len(chunk)} matches, {pool_count} {market} pools", flush=True)
-            for match in chunk:
-                if not isinstance(match, dict) or match.get("id") is None:
+        requests += 1
+        try:
+            chunk = graphql_request(market, 1)
+        except HKJCRequestError as err:
+            if err.status in (403, 429):
+                raise  # Respect provider access/rate limits; no bypass or retry.
+            status[market] = {"status": "error", "http_status": err.status}
+            print(f"MARKET FAILED: {market}: {err}; other markets will still be checked", flush=True)
+            continue
+        except RuntimeError as err:
+            status[market] = {"status": "error", "reason": str(err)[:250]}
+            print(f"MARKET FAILED: {market}: {err}; other markets will still be checked", flush=True)
+            continue
+        pool_count = 0
+        for match in chunk:
+            if not isinstance(match, dict) or match.get("id") is None:
+                continue
+            match_id = str(match["id"])
+            if match_id not in out:
+                out[match_id] = dict(match)
+                out[match_id]["foPools"] = []
+            saved_pools = out[match_id]["foPools"]
+            existing_keys = {
+                (str(p.get("oddsType")), str(p.get("instNo")), str(p.get("id")))
+                for p in saved_pools
+            }
+            for pool in (match.get("foPools") or []):
+                if not isinstance(pool, dict) or pool.get("oddsType") != market:
                     continue
-                match_id = str(match["id"])
-                if match_id not in out:
-                    out[match_id] = dict(match)
-                    out[match_id]["foPools"] = []
-                saved_pools = out[match_id]["foPools"]
-                for pool in (match.get("foPools") or []):
-                    if not isinstance(pool, dict) or pool.get("oddsType") != market:
-                        continue
-                    # Within a match, each market/instance/ID pair is unique.
-                    pool_key = (str(pool.get("oddsType")), str(pool.get("instNo")), str(pool.get("id")))
-                    existing_keys = {(str(p.get("oddsType")), str(p.get("instNo")), str(p.get("id"))) for p in saved_pools}
-                    if pool_key not in existing_keys:
-                        saved_pools.append(pool)
-            if len(chunk) < PAGE_SIZE:
-                break
-    if MAX_PAGES == 1:
-        print("COVERAGE NOTE: requests 1..60 per market only; later fixtures may be omitted.", flush=True)
+                pool_count += 1
+                pool_key = (str(pool.get("oddsType")), str(pool.get("instNo")), str(pool.get("id")))
+                if pool_key not in existing_keys:
+                    saved_pools.append(pool)
+                    existing_keys.add(pool_key)
+        status[market] = {"status": "ok", "fixtures": len(chunk), "pools": pool_count}
+        print(f"HKJC {market} GET page 1: {len(chunk)} matches, {pool_count} {market} pools", flush=True)
+    print("COVERAGE NOTE: requests 1..60 per market only; later fixtures may be omitted.", flush=True)
     dates = {hkt_date() + timedelta(days=i) for i in range(DAYS_AHEAD)}
     selected = []
     unknown_time = 0
@@ -201,7 +221,7 @@ def fetch_all_matches():
             selected.append(match)
     print(f"Received {len(out)} distinct fixtures; {len(selected)} in next {DAYS_AHEAD} HKT dates; "
           f"{unknown_time} unparseable kickoff times", flush=True)
-    return selected, requests
+    return selected, requests, status
 
 
 def txt(info):
@@ -291,7 +311,7 @@ def add_changes(state, fresh_rows):
 def run():
     state, old = load_state()
     started = iso(utcnow())
-    matches, nreq = fetch_all_matches()  # errors do not overwrite previous data
+    matches, nreq, market_status = fetch_all_matches()  # one failed market does not discard others
     fresh = []
     for m in matches:
         meta, rows = parse_match(m, started)
@@ -310,9 +330,13 @@ def run():
         print("NOTICE: at least one target market has no valid quotes for the current date window", flush=True)
     added = add_changes(state, fresh)
     state["generated_at"] = iso(utcnow())
+    partial = any(info["status"] != "ok" for info in market_status.values())
+    print(f"COLLECTION STATUS: {'PARTIAL' if partial else 'COMPLETE'}; markets={market_status}", flush=True)
     state["runs"].append({"time": state["generated_at"], "requests": nreq,
                           "matches_returned": len(matches), "matches_with_odds": len({x['match_id'] for x in fresh}),
-                          "quotes_received": len(fresh), "changes_saved": added})
+                          "quotes_received": len(fresh), "changes_saved": added,
+                          "partial": partial, "market_status": market_status,
+                          "quotes_by_market": by_market})
     state["runs"] = state["runs"][-150:]
     DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
     # Only archive after first successful GraphQL response/parse.
@@ -320,7 +344,8 @@ def run():
         ARCHIVE_PATH.write_text(json.dumps(old, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(f"Archived previous Tipsme data at {ARCHIVE_PATH}")
     DATA_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"HKJC GraphQL success: {len(matches)} fixtures; {len(fresh)} valid quotes; {added} new/changed records")
+    print(f"HKJC GraphQL {'partial' if partial else 'complete'} success: "
+          f"{len(matches)} fixtures; {len(fresh)} valid quotes; {added} new/changed records", flush=True)
 
 
 if __name__ == "__main__":
