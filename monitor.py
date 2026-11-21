@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""HKJC public GraphQL football odds monitor v1.8. Python 3.12, standard library.
+"""HKJC public GraphQL football odds monitor v1.7. Python 3.12, standard library.
 
 Reads HAD (1X2), HDC (handicap), HIL (over/under) before kick-off.
 This is an unofficial, read-only experiment, not a supported HKJC data service.
 Never uses account credentials or bypasses access controls; stops on HTTP 403/429.
-An HTTP 400 on one market will not suppress successful quotes from other markets.
 """
 import gzip
 import json
@@ -32,7 +31,7 @@ MARKET_REQUESTS = {
     "HIL": ("HIL", "EHL"),
 }
 PAGE_SIZE = 60
-MAX_PAGES = 1  # Official observed page is 1..60; 61..120 returned HTTP 400 in Actions
+MAX_PAGES = 1  # Official browser request is 1..60; 61..120 returned HTTP 400 in real Actions
 DAYS_AHEAD = 2  # today plus tomorrow, filtered locally after unfiltered official query
 MAX_HISTORY = 30000
 
@@ -94,3 +93,4 @@ def make_variables(market, start_index):
         "fbOddsTypes": list(types),
         "fbOddsTypesM": list(types),
     }
+    if market == "HAD":
