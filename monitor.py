@@ -31,6 +31,7 @@ MARKET_REQUESTS = {
     "HDC": ("HDC", "EDC"),
     "HIL": ("HIL", "EHL"),
 }
+MARKET_RETRY_DELAY = 30
 PAGE_SIZE = 60
 MAX_PAGES = 1  # Official observed page is 1..60; 61..120 returned HTTP 400 in Actions
 DAYS_AHEAD = 2  # today plus tomorrow, filtered locally after unfiltered official query
@@ -117,11 +118,12 @@ def make_variables(market, start_index):
 
 
 class HKJCRequestError(RuntimeError):
-    """An HTTP response from HKJC. Used to stop on 403/429, not retry it."""
+    """An HTTP error response from HKJC."""
 
-    def __init__(self, market, status, detail):
+    def __init__(self, market, status, detail, *, retryable=False):
         self.market = market
         self.status = status
+        self.retryable = retryable
         super().__init__(f"HKJC {market} HTTP {status}; Response: {detail or '(empty)'}")
 
 
@@ -144,12 +146,19 @@ def graphql_request(market, start_index):
             obj = decode_response(res.read(), res.headers.get("Content-Encoding", ""))
     except urllib.error.HTTPError as err:
         body = err.read(4096)
+        retryable = False
         try:
-            detail = json.dumps(decode_response(body, err.headers.get("Content-Encoding", "")), ensure_ascii=False)
+            response = decode_response(body, err.headers.get("Content-Encoding", ""))
+            detail = json.dumps(response, ensure_ascii=False)
+            retryable = (
+                err.code == 400
+                and isinstance(response, dict)
+                and response.get("errors") == [{"message": "Internal server error - BAD_REQUEST"}]
+            )
         except (OSError, UnicodeError, ValueError):
             detail = body.decode("utf-8", errors="replace")
         detail = " ".join(detail.split())[:1200]
-        raise HKJCRequestError(market, err.code, detail) from err
+        raise HKJCRequestError(market, err.code, detail, retryable=retryable) from err
     except (urllib.error.URLError, TimeoutError, OSError, UnicodeError, ValueError) as err:
         raise RuntimeError(f"HKJC {market} response/network error: {err}") from err
     if not isinstance(obj, dict) or obj.get("errors"):
@@ -163,8 +172,8 @@ def graphql_request(market, start_index):
 def fetch_all_matches():
     """Read each official market separately; keep successful markets after HTTP 400.
 
-    A 403/429 always stops collection. Never retry a rejected request. At most
-    one captured 1..60 page is requested per market until pagination is verified.
+    A 403/429 always stops collection. Retry the intermittent HDC/HIL error
+    once. Only fetch the captured 1..60 page until pagination is verified.
     """
     out = {}
     requests = 0
@@ -174,7 +183,15 @@ def fetch_all_matches():
             time.sleep(1.5)
         requests += 1
         try:
-            chunk = graphql_request(market, 1)
+            try:
+                chunk = graphql_request(market, 1)
+            except HKJCRequestError as err:
+                if market not in ("HDC", "HIL") or not err.retryable:
+                    raise
+                print(f"HKJC {market} HTTP 400; retrying in {MARKET_RETRY_DELAY} seconds", flush=True)
+                time.sleep(MARKET_RETRY_DELAY)
+                requests += 1
+                chunk = graphql_request(market, 1)
         except HKJCRequestError as err:
             if err.status in (403, 429):
                 raise  # Respect provider access/rate limits; no bypass or retry.
@@ -330,7 +347,10 @@ def run():
         print("NOTICE: at least one target market has no valid quotes for the current date window", flush=True)
     added = add_changes(state, fresh)
     state["generated_at"] = iso(utcnow())
-    partial = any(info["status"] != "ok" for info in market_status.values())
+    failed_markets = [market for market, info in market_status.items() if info["status"] != "ok"]
+    partial = bool(failed_markets)
+    if partial and os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning::Partial HKJC odds update. Failed markets: {', '.join(failed_markets)}", flush=True)
     print(f"COLLECTION STATUS: {'PARTIAL' if partial else 'COMPLETE'}; markets={market_status}", flush=True)
     state["runs"].append({"time": state["generated_at"], "requests": nreq,
                           "matches_returned": len(matches), "matches_with_odds": len({x['match_id'] for x in fresh}),
