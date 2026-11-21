@@ -26,31 +26,117 @@ MAX_PAGES_PER_DAY = 3
 DAYS_AHEAD = 2  # today plus tomorrow (HKT)
 MAX_HISTORY = 30000
 
-# Query structure based on the public football matchList GraphQL schema.
-# Keep fields narrow to reduce load and response-size errors.
+# Copy of the public hkjc-api footballMatchesQuery (matchList) query template.
+# NOTE: HKJC may change its server-side whitelist; matching a public template
+# is not proof of access permission or live compatibility. Stop on errors.
+# Whitelist checking can include query text itself, not merely variables.
 QUERY = """
-query matchList($startIndex: Int, $endIndex: Int, $startDate: String,
-  $endDate: String, $fbOddsTypes: [FBOddsType]!,
-  $fbOddsTypesM: [FBOddsType]!) {
-  matches(startIndex: $startIndex, endIndex: $endIndex,
-    startDate: $startDate, endDate: $endDate,
-    fbOddsTypes: $fbOddsTypesM) {
-    id frontEndId matchDate kickOffTime status updateAt
-    homeTeam { name_ch name_en }
-    awayTeam { name_ch name_en }
-    tournament { name_ch name_en }
-    foPools(fbOddsTypes: $fbOddsTypes) {
-      oddsType name_ch inplay status updateAt
-      lines {
-        lineId condition main status
-        combinations {
-          str currentOdds status
-          selections { selId str name_ch name_en }
+query matchList($startIndex: Int, $endIndex: Int,$startDate: String, $endDate: String, $matchIds: [String], $tournIds: [String], $fbOddsTypes: [FBOddsType]!, $fbOddsTypesM: [FBOddsType]!, $inplayOnly: Boolean, $featuredMatchesOnly: Boolean, $frontEndIds: [String], $earlySettlementOnly: Boolean, $showAllMatch: Boolean) {
+    matches(startIndex: $startIndex,endIndex: $endIndex, startDate: $startDate, endDate: $endDate, matchIds: $matchIds, tournIds: $tournIds, fbOddsTypes: $fbOddsTypesM, inplayOnly: $inplayOnly, featuredMatchesOnly: $featuredMatchesOnly, frontEndIds: $frontEndIds, earlySettlementOnly: $earlySettlementOnly, showAllMatch: $showAllMatch) {
+      id
+      frontEndId
+      matchDate
+      kickOffTime
+      status
+      updateAt
+      sequence
+      esIndicatorEnabled
+      homeTeam {
+        id
+        name_en
+        name_ch
+      }
+      awayTeam {
+        id
+        name_en
+        name_ch
+      }
+      tournament {
+        id
+        frontEndId
+        nameProfileId
+        isInteractiveServiceAvailable
+        code
+        name_en
+        name_ch
+      }
+      isInteractiveServiceAvailable
+      inplayDelay
+      venue {
+        code
+        name_en
+        name_ch
+      }
+      tvChannels {
+        code
+        name_en
+        name_ch
+      }
+      liveEvents {
+        id
+        code
+      }
+      featureStartTime
+      featureMatchSequence
+      poolInfo {
+        normalPools
+        inplayPools
+        sellingPools
+        ntsInfo
+        entInfo
+        definedPools
+      }
+      runningResult {
+        homeScore
+        awayScore
+        corner
+        homeCorner
+        awayCorner
+      }
+      runningResultExtra {
+        homeScore
+        awayScore
+        corner
+        homeCorner
+        awayCorner
+      }
+      adminOperation {
+        remark {
+          typ
+        }
+      }
+      foPools(fbOddsTypes: $fbOddsTypes) {
+        id
+        status
+        oddsType
+        instNo
+        inplay
+        name_ch
+        name_en
+        updateAt
+        expectedSuspendDateTime
+        lines {
+          lineId
+          status
+          condition
+          main
+          combinations {
+            combId
+            str
+            status
+            offerEarlySettlement
+            currentOdds
+            selections {
+              selId
+              str
+              name_ch
+              name_en
+            }
+          }
         }
       }
     }
   }
-}
 """
 
 
@@ -94,11 +180,21 @@ def load_state():
 
 def graphql_request(start_date, start_index):
     payload = {"operationName": "matchList", "query": QUERY,
-               "variables": {"startDate": start_date, "endDate": start_date,
-                             "startIndex": start_index,
-                             "endIndex": start_index + PAGE_SIZE - 1,
-                             "fbOddsTypes": list(MARKETS),
-                             "fbOddsTypesM": list(MARKETS)}}
+               "variables": {
+                   "startIndex": start_index,
+                   "endIndex": start_index + PAGE_SIZE - 1,
+                   "startDate": start_date,
+                   "endDate": start_date,
+                   "matchIds": None,
+                   "tournIds": None,
+                   "fbOddsTypes": list(MARKETS),
+                   "fbOddsTypesM": list(MARKETS),
+                   "inplayOnly": None,
+                   "featuredMatchesOnly": False,
+                   "frontEndIds": None,
+                   "earlySettlementOnly": False,
+                   "showAllMatch": False,
+               }}
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
