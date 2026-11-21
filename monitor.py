@@ -1,193 +1,264 @@
 #!/usr/bin/env python3
-"""iPhone-first read-only HKJC odds history: GitHub Actions + GitHub Pages.
+"""HKJC public GraphQL football odds monitor. Python 3.12, standard library.
 
-Only stdlib. No wagering, no account login, no circumvention. One scheduled
-run every 2h. Secrets supplied through environment, never stored in repo.
+Reads HAD (1X2), HDC (handicap), HIL (over/under) before kick-off.
+This is an unofficial, read-only experiment, not a supported HKJC data service.
+Never uses account credentials or bypasses access controls; stops on HTTP 403/429.
 """
 import json
 import os
 import sys
+import time
+import math
 import urllib.error
-import urllib.parse
 import urllib.request
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-DATA_FILE = ROOT / "docs" / "data.json"
-URL = "https://api.tipsme.hk/v1/football"
+ROOT = Path(__file__).resolve().parent
+DATA_PATH = ROOT / "docs" / "data.json"
+ARCHIVE_PATH = ROOT / "docs" / "tipsme-archive.json"
+ENDPOINT = "https://info.cld.hkjc.com/graphql/base/"
 HKT = timezone(timedelta(hours=8))
-ODDS_DAILY_CAP = 26   # 30 on Free; allow some headroom
-FIXTURE_DAILY_CAP = 46  # 50 on Free; allow some headroom
-PICK_COUNT = 2
-MAX_SNAPSHOTS = 9000
+MARKETS = ("HAD", "HDC", "HIL")
+PAGE_SIZE = 60
+MAX_PAGES_PER_DAY = 3
+DAYS_AHEAD = 2  # today plus tomorrow (HKT)
+MAX_HISTORY = 30000
+
+# Query structure based on the public football matchList GraphQL schema.
+# Keep fields narrow to reduce load and response-size errors.
+QUERY = """
+query matchList($startIndex: Int, $endIndex: Int, $startDate: String,
+  $endDate: String, $fbOddsTypes: [FBOddsType]!,
+  $fbOddsTypesM: [FBOddsType]!) {
+  matches(startIndex: $startIndex, endIndex: $endIndex,
+    startDate: $startDate, endDate: $endDate,
+    fbOddsTypes: $fbOddsTypesM) {
+    id frontEndId matchDate kickOffTime status updateAt
+    homeTeam { name_ch name_en }
+    awayTeam { name_ch name_en }
+    tournament { name_ch name_en }
+    foPools(fbOddsTypes: $fbOddsTypes) {
+      oddsType name_ch inplay status updateAt
+      lines {
+        lineId condition main status
+        combinations {
+          str currentOdds status
+          selections { selId str name_ch name_en }
+        }
+      }
+    }
+  }
+}
+"""
 
 
-def now():
+def utcnow():
     return datetime.now(timezone.utc)
 
 
 def iso(dt):
-    return dt.isoformat(timespec="seconds").replace("+00:00", "Z")
+    return dt.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
-def parse_time(value):
-    if not isinstance(value, str) or not value:
+def hkt_date():
+    return utcnow().astimezone(HKT).date()
+
+
+def parse_datetime(value):
+    """HKJC date strings may carry a timezone or be local HK time."""
+    if not isinstance(value, str) or not value.strip():
         return None
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+        d = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+        return (d.replace(tzinfo=HKT) if d.tzinfo is None else d).astimezone(timezone.utc)
     except ValueError:
         return None
 
 
-def name(x):
-    return (x.get("name") or x.get("nameOriginal") or "?") if isinstance(x, dict) else str(x or "?")
+def new_state():
+    return {"schema_version": 2, "provider": "HKJC_GRAPHQL",
+            "generated_at": None, "matches": {}, "snapshots": [], "runs": []}
 
 
-def empty_state():
-    return {"generated_at": None, "matches": {}, "snapshots": [], "runs": [], "counters": {}}
+def load_state():
+    if not DATA_PATH.exists():
+        return new_state(), None
+    old = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    if old.get("schema_version") == 2 and old.get("provider") == "HKJC_GRAPHQL":
+        return old, None
+    # Archive the older Tipsme-based dataset rather than relabel it as direct HKJC.
+    return new_state(), old
 
 
-def load():
+def graphql_request(start_date, start_index):
+    payload = {"operationName": "matchList", "query": QUERY,
+               "variables": {"startDate": start_date, "endDate": start_date,
+                             "startIndex": start_index,
+                             "endIndex": start_index + PAGE_SIZE - 1,
+                             "fbOddsTypes": list(MARKETS),
+                             "fbOddsTypesM": list(MARKETS)}}
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Accept-Language": "zh-HK,zh;q=0.9,en;q=0.8",
+        "Referer": "https://bet.hkjc.com/",
+        "User-Agent": "Mozilla/5.0 (compatible; OddsHistoryResearch/1.0)",
+    }
+    req = urllib.request.Request(ENDPOINT,
+        data=json.dumps(payload, separators=(",", ":")).encode("utf-8"),
+        headers=headers, method="POST")
     try:
-        data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = empty_state()
-    for key, default in empty_state().items():
-        data.setdefault(key, default)
-    return data
+        with urllib.request.urlopen(req, timeout=30) as res:
+            obj = json.loads(res.read().decode("utf-8"))
+    except urllib.error.HTTPError as err:
+        retry = err.headers.get("Retry-After") or "unknown"
+        raise RuntimeError(f"HKJC HTTP {err.code}; Retry-After={retry}. Stopping (no bypass).") from err
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as err:
+        raise RuntimeError(f"HKJC response/network error: {err}") from err
+    if not isinstance(obj, dict) or obj.get("errors"):
+        raise RuntimeError(f"HKJC GraphQL error: {str(obj.get('errors', obj))[:900]}")
+    matches = (obj.get("data") or {}).get("matches")
+    if not isinstance(matches, list):
+        raise RuntimeError("HKJC response is missing data.matches; API query may have changed")
+    return matches
 
 
-def daily_counter(state):
-    day = now().astimezone(HKT).date().isoformat()
-    # Only retain a small history, but protect across future scheduled runs.
-    counts = state["counters"].setdefault(day, {"odds": 0, "fixtures": 0})
-    state["counters"] = {d: v for d, v in state["counters"].items() if d >= (now().astimezone(HKT).date() - timedelta(days=10)).isoformat()}
-    return counts
+def fetch_all_matches():
+    out = {}
+    dates = [hkt_date() + timedelta(days=i) for i in range(DAYS_AHEAD)]
+    requests = 0
+    for d in dates:
+        date = d.isoformat()
+        for page in range(MAX_PAGES_PER_DAY):
+            start = 1 + page * PAGE_SIZE
+            chunk = graphql_request(date, start)
+            requests += 1
+            print(f"HKJC {date}, page {page+1}: {len(chunk)} matches")
+            for m in chunk:
+                if isinstance(m, dict) and m.get("id") is not None:
+                    out[str(m["id"])] = m
+            if len(chunk) < PAGE_SIZE:
+                break
+            # modest spacing; no aggressive polling
+            time.sleep(1.5)
+        time.sleep(1.5)
+    return list(out.values()), requests
 
 
-def request_json(state, kind, route, query=None):
-    caps = {"odds": ODDS_DAILY_CAP, "fixtures": FIXTURE_DAILY_CAP}
-    counts = daily_counter(state)
-    if counts[kind] >= caps[kind]:
-        print(f"SKIP: {kind} 日內本地上限 {caps[kind]} 已達")
-        return None
-    key = os.environ.get("TIPSME_API_KEY", "").strip()
-    if not key:
-        raise RuntimeError("缺少 GitHub Actions Secret: TIPSME_API_KEY")
-    suffix = "?" + urllib.parse.urlencode(query) if query else ""
-    url = URL + route + suffix
-    headers = {"Authorization": "Bearer " + key, "Accept": "application/json", "User-Agent": "odds-monitor-iphone/0.1"}
-    # Count attempts, including HTTP/network errors, to avoid spending API quota unexpectedly.
-    counts[kind] += 1
-    req = urllib.request.Request(url, headers=headers)
-    print(f"GET {route} [kind={kind}] [used today={counts[kind]}]")
+def txt(info):
+    if isinstance(info, dict):
+        return str(info.get("name_ch") or info.get("name_en") or "?")
+    return str(info or "?")
+
+
+def number(value):
     try:
-        with urllib.request.urlopen(req, timeout=25) as response:
-            value = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        print(f"HTTP {e.code}: {route} (Retry-After: {e.headers.get('Retry-After','?')})")
-        if e.code in (401, 403):
-            raise RuntimeError("Tipsme API 拒絕授權 (401/403)。請喺 GitHub Secrets 檢查 TIPSME_API_KEY；勿將 Key 放入公開 Repository。") from None
+        n = float(value)
+        return n if math.isfinite(n) and 1 < n < 10000 else None
+    except (TypeError, ValueError):
         return None
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
-        print(f"Network / JSON error: {type(e).__name__}")
-        return None
-    if not isinstance(value, dict):
-        print("Unexpected JSON envelope, ignored")
-        return None
-    return value
 
 
-def fixture_rows(api_response):
-    rows = api_response.get("data", []) if isinstance(api_response, dict) else []
-    return [m for m in rows if isinstance(m, dict) and m.get("isHkjc") is True and m.get("id") is not None]
-
-
-def select_matches(state, candidates):
-    clock = now()
-    dedup = {}
-    for m in candidates:
-        kickoff = parse_time(m.get("kickoffUtc"))
-        if not kickoff or not timedelta(minutes=2) <= kickoff-clock <= timedelta(hours=30):
+def parse_match(m, observed_at):
+    mid = str(m["id"])
+    kickoff = parse_datetime(m.get("kickOffTime"))
+    match = {"id": mid, "front_end_id": str(m.get("frontEndId") or ""),
+             "home": txt(m.get("homeTeam")), "away": txt(m.get("awayTeam")),
+             "competition": txt(m.get("tournament")), "kickoff_utc": iso(kickoff) if kickoff else None,
+             "status": str(m.get("status") or "unknown"), "last_seen": observed_at,
+             "provider": "HKJC_GRAPHQL"}
+    rows = []
+    for pool in (m.get("foPools") or []):
+        if not isinstance(pool, dict) or pool.get("oddsType") not in MARKETS:
             continue
-        mid = str(m["id"])
-        state["matches"][mid] = {
-            "id": mid, "home": name(m.get("home")), "away": name(m.get("away")),
-            "competition": name(m.get("competition")), "kickoff_utc": iso(kickoff)
-        }
-        dedup[mid] = (kickoff, mid)
-    return [mid for _, mid in sorted(dedup.values())[:PICK_COUNT]]
-
-
-def extract_hkjc_1x2(payload, mid, seen_utc):
-    data = payload.get("data", {}) if isinstance(payload, dict) else {}
-    rows = data.get("matchResult", []) if isinstance(data, dict) else []
-    result = []
-    if not isinstance(rows, list):
-        return result
-    # The HKJC endpoint includes recorded odds history, so store source UTC
-    # times alongside the first time this monitor observed each source quote.
-    for quote in rows:
-        if not isinstance(quote, dict):
+        if pool.get("inplay") is True:  # pre-match data only for version 1
             continue
-        source_time = quote.get("recordedUtc") or seen_utc
-        for s in ("home", "draw", "away"):
-            try:
-                value = float(str(quote.get(s, "")).strip())
-            except (TypeError, ValueError):
+        market = pool["oddsType"]
+        pool_time = parse_datetime(pool.get("updateAt"))
+        for line in (pool.get("lines") or []):
+            if not isinstance(line, dict):
                 continue
-            if not 1.0 < value < 100000 or not value == value:
-                continue
-            result.append({"source": "HKJC", "match_id": mid, "market": "1X2", "selection": s,
-                           "odds": value, "source_time": source_time, "first_seen": seen_utc})
-    return result
+            condition = str(line.get("condition") or "")
+            line_id = str(line.get("lineId") or "")
+            for combo in (line.get("combinations") or []):
+                if not isinstance(combo, dict):
+                    continue
+                price = number(combo.get("currentOdds"))
+                if price is None:
+                    continue
+                sels = [s for s in (combo.get("selections") or []) if isinstance(s, dict)]
+                label = " + ".join(txt(s) for s in sels) if sels else str(combo.get("str") or "?")
+                selection_key = str(combo.get("str") or "") or ":".join(str(s.get("selId") or s.get("str") or "") for s in sels)
+                if not selection_key:
+                    continue
+                rows.append({
+                    "source": "HKJC_GRAPHQL", "match_id": mid,
+                    "market": market, "line_id": line_id, "condition": condition,
+                    "is_main_line": bool(line.get("main")), "selection": selection_key,
+                    "selection_name": label, "odds": price,
+                    "pool_status": str(pool.get("status") or "unknown"),
+                    "line_status": str(line.get("status") or "unknown"),
+                    "selection_status": str(combo.get("status") or "unknown"),
+                    "source_updated_at": iso(pool_time) if pool_time else None,
+                    "observed_at": observed_at,
+                    "inplay": False,
+                })
+    return match, rows
 
 
-def append_new(state, incoming):
-    rows = state["snapshots"]
-    fingerprints = {(x.get("source"), str(x.get("match_id")), x.get("market"), x.get("selection"),
-                     x.get("source_time"), x.get("odds")) for x in rows}
-    n = 0
-    for x in incoming:
-        fingerprint = (x["source"], x["match_id"], x["market"], x["selection"], x["source_time"], x["odds"])
-        if fingerprint not in fingerprints:
-            rows.append(x)
-            fingerprints.add(fingerprint)
-            n += 1
-    rows.sort(key=lambda x: (str(x.get("source_time","")), str(x.get("match_id","")), str(x.get("selection",""))))
-    # Capped to prevent large static page payloads. Export/archive separately if needed.
-    state["snapshots"] = rows[-MAX_SNAPSHOTS:]
-    return n
+def row_key(row):
+    return (row["match_id"], row["market"], row["line_id"], row["condition"], row["selection"])
+
+
+def row_value(row):
+    return (row["odds"], row["pool_status"], row["line_status"], row["selection_status"])
+
+
+def add_changes(state, fresh_rows):
+    latest = {}
+    for row in state["snapshots"]:
+        latest[row_key(row)] = row_value(row)
+    count = 0
+    for row in fresh_rows:
+        k = row_key(row)
+        if latest.get(k) != row_value(row):
+            state["snapshots"].append(row)
+            latest[k] = row_value(row)
+            count += 1
+    state["snapshots"] = state["snapshots"][-MAX_HISTORY:]
+    return count
 
 
 def run():
-    state = load()
-    first = now()
-    hk_today = first.astimezone(HKT).date()
-    candidates = []
-    err = None
-    for day in (hk_today, hk_today + timedelta(days=1)):
-        response = request_json(state, "fixtures", "/matches", {"date": day.isoformat(), "tz": 480, "page": 1, "pageSize": 100, "locale": "zh-HK"})
-        candidates.extend(fixture_rows(response))
-    selected = select_matches(state, candidates)
-    new_records = 0
-    for mid in selected:
-        response = request_json(state, "odds", f"/matches/{mid}/odds/hkjc", {"markets": "matchResult", "locale": "zh-HK"})
-        if response is not None:
-            new_records += append_new(state, extract_hkjc_1x2(response, mid, iso(now())))
-    state["generated_at"] = iso(now())
-    state["runs"].append({"time": state["generated_at"], "selected": selected, "added": new_records})
-    state["runs"] = state["runs"][-90:]
-    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DATA_FILE.write_text(json.dumps(state, ensure_ascii=False, separators=(",", ":"), indent=1) + "\n", encoding="utf-8")
-    print(f"Selected matches: {selected}, new odds rows: {new_records}, total snapshots: {len(state['snapshots'])}")
-    print(f"Saved {DATA_FILE}")
+    state, old = load_state()
+    started = iso(utcnow())
+    matches, nreq = fetch_all_matches()  # errors do not overwrite previous data
+    fresh = []
+    for m in matches:
+        meta, rows = parse_match(m, started)
+        if rows:
+            state["matches"][meta["id"]] = meta
+            fresh.extend(rows)
+    added = add_changes(state, fresh)
+    state["generated_at"] = iso(utcnow())
+    state["runs"].append({"time": state["generated_at"], "requests": nreq,
+                          "matches_returned": len(matches), "matches_with_odds": len({x['match_id'] for x in fresh}),
+                          "quotes_received": len(fresh), "changes_saved": added})
+    state["runs"] = state["runs"][-150:]
+    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # Only archive after first successful GraphQL response/parse.
+    if old is not None and not ARCHIVE_PATH.exists():
+        ARCHIVE_PATH.write_text(json.dumps(old, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        print(f"Archived previous Tipsme data at {ARCHIVE_PATH}")
+    DATA_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(f"HKJC GraphQL success: {len(matches)} fixtures; {len(fresh)} valid quotes; {added} new/changed records")
 
 
 if __name__ == "__main__":
     try:
         run()
-    except RuntimeError as e:
-        print("設定錯誤：" + str(e), file=sys.stderr)
+    except Exception as e:
+        print(f"COLLECTION FAILED: {type(e).__name__}: {e}", file=sys.stderr)
         sys.exit(1)
