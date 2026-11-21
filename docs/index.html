@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-HK"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HKJC GraphQL 賠率監察</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;--bg:#0b1321;--panel:#152133;--edge:#304057;--ink:#f2f6fd;--muted:#b4c4d7;--accent:#55cdf9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}main{max-width:1000px;margin:auto;padding:22px 14px 65px}h1{font-size:23px;margin:0 0 7px}h2{font-size:17px;margin:0 0 12px}header{margin-bottom:17px}.small{font-size:13px;color:var(--muted);line-height:1.55}.panel{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:16px;margin:12px 0}.stats{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}.stats b{font-size:18px;color:var(--accent)}.ctrl{margin:10px 0}.ctrl label{display:block;font-size:13px;color:var(--muted);margin:0 0 7px}select{appearance:auto;width:100%;min-height:45px;background:#0e1c30;color:white;border:1px solid #48607c;border-radius:10px;font-size:16px;padding:10px 12px}.tabs{display:flex;gap:7px;margin:14px 0}.tabs button{flex:1;border:1px solid #365571;border-radius:9px;background:#12314d;color:var(--ink);padding:12px 3px;font-size:15px}.tabs button.active{background:#126d9d;border-color:#48d4ff;font-weight:650}.notice{color:#e5c98d;font-size:12px;line-height:1.55}.meta{font-size:13px;color:var(--muted);margin:10px 0;line-height:1.6}svg{display:block;width:100%;height:260px;background:#0c1a2c;border-radius:12px;margin:10px 0}#legend{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;margin-top:10px}#legend span{display:inline-flex;align-items:center;gap:6px}#legend i{width:10px;height:10px;border-radius:50%;display:inline-block}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px;min-width:550px}th,td{padding:10px 8px;border-bottom:1px solid #304159;text-align:left}th{color:var(--muted)}td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}a{color:#7edcff}.empty{text-align:center;color:var(--muted);padding:28px 8px}footer{font-size:12px;color:var(--muted);line-height:1.65;margin:22px 5px}#health{font-size:14px}
+</style></head><body><main>
+<header><h1>⚽ HKJC GraphQL 賠率監察</h1><div class="small">香港馬會直接數據 · 賽前盤 · 香港時間 · 歷史研究</div></header>
+<section class="panel"><div id="health">載入數據中…</div><div id="stats" class="stats small"></div></section>
+<section class="panel"><div class="ctrl"><label for="match">比賽（按開賽時間由早到遲；只顯示曾取得報價的賽事）</label><select id="match"></select></div>
+<div class="tabs" id="markets"><button data-market="HAD" class="active">主客和</button><button data-market="HDC">讓球</button><button data-market="HIL">入球大細</button></div>
+<div class="ctrl" id="lineArea"><label for="line">盤口線</label><select id="line"></select></div>
+<div id="desc" class="meta"></div><div id="message" class="notice"></div>
+<h2>賠率變動走勢</h2><svg id="plot" viewBox="0 0 800 260" role="img" aria-label="賠率歷史折線圖"></svg><div id="legend"></div><div id="empty" class="empty"></div></section>
+<section class="panel"><h2>最近變動紀錄</h2><p class="small">同一盤口線嘅每個選項獨立儲存；只記錄賠率或狀態有變化嘅時刻。來源更新時間與本系統擷取時間分開保存。</p>
+<div class="scroll"><table><thead><tr><th>首次觀察（香港）</th><th>選項</th><th>來源更新（香港）</th><th>賠率</th><th>狀態</th></tr></thead><tbody id="history"></tbody></table></div></section>
+<footer>非馬會官方產品。賠率僅供研究，與實際受注價格及可投注狀態可能不同。並非即時報價；GitHub Actions 排程可能延遲或漏跑。每條讓球線／入球線分開處理。舊 Tipsme 資料如有存檔，不會混入 GraphQL 走勢。未接通 Stake.com。請遵守資料提供者使用條款。</footer>
+</main><script>
+'use strict';
+let db={matches:{},snapshots:[],runs:[]}, market='HAD', chosenMatch='', chosenLine='';
+const $=id=>document.getElementById(id);
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hkDate(x){if(!x)return "—";const d=new Date(x);return Number.isFinite(+d)?new Intl.DateTimeFormat('zh-HK',{timeZone:'Asia/Hong_Kong',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(d):'—'}
+function quoteRows(){return (db.snapshots||[]).filter(r=>r.source==='HKJC_GRAPHQL'&&r.match_id===chosenMatch&&r.market===market&&!r.inplay&&Number.isFinite(Number(r.odds)))}
+function lineKey(r){return String(r.line_id||'')+'|'+String(r.condition||'')}
+function lineText(r){const name=(r.condition||'').trim();return name?name:'標準盤口'}
+function timeValue(r){return new Date(r.observed_at||r.source_updated_at||0).getTime()||0}
+function selectMatch(){chosenMatch=$('match').value;updateLines()}
+function updateLines(){const rows=quoteRows();const lines=new Map();for(const r of rows){const key=lineKey(r);if(!lines.has(key))lines.set(key,{key,name:lineText(r),main:!!r.is_main_line});if(r.is_main_line)lines.get(key).main=true}
+const vals=[...lines.values()].sort((a,b)=>(Number(b.main)-Number(a.main))||a.name.localeCompare(b.name,'zh-HK'));
+$('lineArea').style.display=market==='HAD'&&vals.length<=1?'none':'block';
+if(!vals.find(x=>x.key===chosenLine))chosenLine=vals[0]?.key||'';
+$('line').innerHTML=vals.map(x=>`<option value="${safe(x.key)}">${safe(x.name)}${x.main?'（主要）':''}</option>`).join('')||'<option value="">冇開盤紀錄</option>';
+$('line').value=chosenLine;render()}
+function filtered(){return quoteRows().filter(x=>lineKey(x)===chosenLine).sort((a,b)=>timeValue(a)-timeValue(b))}
+const colors=['#55cdf9','#ffbc70','#bb9eff','#6bd6a8','#f18abb'];
+function plot(rows){const svg=$('plot');svg.replaceChildren();const legend=$('legend');legend.innerHTML='';$('empty').textContent='';if(!rows.length){$('empty').textContent='呢場比賽未記錄到呢種盤口。';return}
+const NS='http://www.w3.org/2000/svg';const el=(tag,attrs,text)=>{const node=document.createElementNS(NS,tag);for(const [key,value]of Object.entries(attrs))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;svg.appendChild(node);return node};
+const groups=new Map();for(const r of rows){const key=String(r.selection);if(!groups.has(key))groups.set(key,{label:r.selection_name||key,rows:[]});groups.get(key).rows.push(r)}
+const allT=rows.map(timeValue),allO=rows.map(r=>+r.odds);let t0=Math.min(...allT),t1=Math.max(...allT),lo=Math.min(...allO),hi=Math.max(...allO);const spread=(hi-lo)||0.2;lo-=spread*0.18;hi+=spread*0.18;const xx=t=>55+(t-t0)/(t1-t0||1)*718,yy=o=>218-(o-lo)/(hi-lo)*177;
+for(let j=0;j<=4;j++){const v=lo+(hi-lo)*j,y=yy(v);el('line',{x1:52,x2:785,y1:y,y2:y,stroke:'#304053'});el('text',{x:6,y:y+5,fill:'#b9c8dc','font-size':13},v.toFixed(2))}
+let i=0;for(const group of groups.values()){const col=colors[i++%colors.length],arr=group.rows;el('polyline',{points:arr.map(x=>`${xx(timeValue(x))},${yy(+x.odds)}`).join(' '),stroke:col,'stroke-width':3,fill:'none','stroke-linejoin':'round'});for(const r of arr){el('circle',{cx:xx(timeValue(r)),cy:yy(+r.odds),r:3.5,fill:col})}const tag=document.createElement('span');tag.innerHTML=`<i style="background:${col}"></i>${safe(group.label)} · ${Number(arr[arr.length-1].odds).toFixed(2)}`;legend.appendChild(tag)}
+el('text',{x:54,y:249,fill:'#b9c8dc','font-size':12},hkDate(new Date(t0).toISOString()));el('text',{x:784,y:249,fill:'#b9c8dc','font-size':12,'text-anchor':'end'},hkDate(new Date(t1).toISOString()));
+}
+function render(){const m=(db.matches||{})[chosenMatch];$('desc').textContent=m?`${m.competition}｜${m.home} 對 ${m.away}｜開賽 ${hkDate(m.kickoff_utc)}｜賽事狀態 ${m.status||'未知'}`:'';
+const rows=filtered();const line=rows.at(-1);$('message').textContent=line?`盤口 ${lineText(line)}｜最新一次已記錄狀態：彩池 ${line.pool_status}、線 ${line.line_status}。注意：呢個唔係當刻保證接受投注嘅狀態。`:'';
+plot(rows);$('history').innerHTML=[...rows].reverse().slice(0,80).map(r=>`<tr><td>${safe(hkDate(r.observed_at))}</td><td>${safe(r.selection_name||r.selection)}</td><td>${safe(hkDate(r.source_updated_at))}</td><td class="num">${Number(r.odds).toFixed(2)}</td><td>${safe(r.selection_status||'未知')}</td></tr>`).join('')||'<tr><td colspan="5">暫時冇紀錄</td></tr>';
+}
+async function init(){try{const r=await fetch('data.json?bust='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);db=await r.json();if(db.provider!=='HKJC_GRAPHQL'){$('health').textContent='目前仍然係舊版 Tipsme 數據。請先執行新版收集器。';return}
+const quotes=(db.snapshots||[]).filter(x=>x.source==='HKJC_GRAPHQL');const ids=new Set(quotes.map(x=>String(x.match_id)));const keys=Object.keys(db.matches||{}).filter(k=>ids.has(k)).sort((a,b)=>new Date(db.matches[a].kickoff_utc)-new Date(db.matches[b].kickoff_utc));
+$('match').innerHTML=keys.map(k=>`<option value="${safe(k)}">${safe(db.matches[k].home)} vs ${safe(db.matches[k].away)} · ${hkDate(db.matches[k].kickoff_utc)}</option>`).join('')||'<option value="">暫無報價</option>';
+const future=keys.find(k=>new Date(db.matches[k].kickoff_utc).getTime()>Date.now());chosenMatch=future||keys.at(-1)||'';$('match').value=chosenMatch;
+$('health').textContent='最後一次收集：'+hkDate(db.generated_at)+'（香港時間）';$('stats').innerHTML=`<span>有報價賽事 <b>${ids.size}</b></span><span>歷史變動 <b>${quotes.length}</b></span><span>查詢盤口 <b>3</b></span>`;
+$('match').addEventListener('change',selectMatch);$('line').addEventListener('change',()=>{chosenLine=$('line').value;render()});document.querySelectorAll('#markets button').forEach(b=>b.addEventListener('click',()=>{market=b.dataset.market;chosenLine='';document.querySelectorAll('#markets button').forEach(x=>x.classList.toggle('active',x===b));updateLines()}));updateLines();
+}catch(e){$('health').textContent='讀取失敗：'+String(e)}}init();
+</script></body></html>
