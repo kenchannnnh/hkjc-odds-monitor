@@ -1,7 +1,7 @@
 {
  "schema_version": 2,
  "provider": "HKJC_GRAPHQL",
- "generated_at": "2026-11-23T21:01:29Z",
+ "generated_at": "2026-11-23T23:03:52Z",
  "matches": {
   "50080328": {
    "id": "50080328",
@@ -2552,7 +2552,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-24T16:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081069": {
@@ -2596,7 +2596,7 @@
    "competition": "埃及超級聯賽",
    "kickoff_utc": "2026-11-24T18:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081134": {
@@ -2607,7 +2607,7 @@
    "competition": "埃及超級聯賽",
    "kickoff_utc": "2026-11-24T18:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081157": {
@@ -2640,7 +2640,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081094": {
@@ -2651,7 +2651,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081099": {
@@ -2662,7 +2662,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081097": {
@@ -2673,7 +2673,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081095": {
@@ -2684,7 +2684,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081100": {
@@ -2695,7 +2695,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080379": {
@@ -2706,7 +2706,7 @@
    "competition": "蘇格蘭超級聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081103": {
@@ -2717,7 +2717,7 @@
    "competition": "英格蘭甲組聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081104": {
@@ -2728,7 +2728,7 @@
    "competition": "英格蘭甲組聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081106": {
@@ -2739,7 +2739,7 @@
    "competition": "英格蘭甲組聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081105": {
@@ -2750,7 +2750,7 @@
    "competition": "英格蘭甲組聯賽",
    "kickoff_utc": "2026-11-24T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080178": {
@@ -2805,7 +2805,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-24T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080167": {
@@ -2816,7 +2816,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-24T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080165": {
@@ -2827,7 +2827,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-24T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50079626": {
@@ -2926,7 +2926,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080760": {
@@ -2937,7 +2937,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080761": {
@@ -2948,7 +2948,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081159": {
@@ -2959,7 +2959,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T17:12:58Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080766": {
@@ -2981,7 +2981,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-24T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080366": {
@@ -2992,7 +2992,40 @@
    "competition": "蘇格蘭超級聯賽",
    "kickoff_utc": "2026-11-24T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-23T21:00:23Z",
+   "last_seen": "2026-11-23T23:02:47Z",
+   "provider": "HKJC_GRAPHQL"
+  },
+  "50080751": {
+   "id": "50080751",
+   "front_end_id": "FB9478",
+   "home": "FC橫濱",
+   "away": "仙台維加泰",
+   "competition": "日本乙組聯賽",
+   "kickoff_utc": "2026-11-25T10:00:00Z",
+   "status": "PREEVENT",
+   "last_seen": "2026-11-23T23:02:47Z",
+   "provider": "HKJC_GRAPHQL"
+  },
+  "50080753": {
+   "id": "50080753",
+   "front_end_id": "FB9480",
+   "home": "北海道札幌岡薩多",
+   "away": "藤枝MYFC",
+   "competition": "日本乙組聯賽",
+   "kickoff_utc": "2026-11-25T10:00:00Z",
+   "status": "PREEVENT",
+   "last_seen": "2026-11-23T23:02:47Z",
+   "provider": "HKJC_GRAPHQL"
+  },
+  "50080757": {
+   "id": "50080757",
+   "front_end_id": "FB9484",
+   "home": "磐城FC",
+   "away": "富山勝利",
+   "competition": "日本乙組聯賽",
+   "kickoff_utc": "2026-11-25T10:00:00Z",
+   "status": "PREEVENT",
+   "last_seen": "2026-11-23T23:02:47Z",
    "provider": "HKJC_GRAPHQL"
   }
  },
@@ -47655,6 +47688,210 @@
    "source_updated_at": "2026-11-23T11:30:02Z",
    "observed_at": "2026-11-23T21:00:23Z",
    "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50081159",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "主隊勝",
+   "odds": 2.77,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50081159",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "A",
+   "selection_name": "客隊勝",
+   "odds": 2.34,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50081159",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "D",
+   "selection_name": "和",
+   "odds": 2.9,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080751",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "主隊勝",
+   "odds": 2.5,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080751",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "A",
+   "selection_name": "客隊勝",
+   "odds": 2.33,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080751",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "D",
+   "selection_name": "和",
+   "odds": 3.3,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080753",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "主隊勝",
+   "odds": 1.76,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080753",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "A",
+   "selection_name": "客隊勝",
+   "odds": 3.65,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080753",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "D",
+   "selection_name": "和",
+   "odds": 3.45,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080757",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "主隊勝",
+   "odds": 2.3,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080757",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "A",
+   "selection_name": "客隊勝",
+   "odds": 2.43,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080757",
+   "market": "HAD",
+   "line_id": "0",
+   "condition": "0.0",
+   "is_main_line": true,
+   "selection": "D",
+   "selection_name": "和",
+   "odds": 3.5,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T11:30:02Z",
+   "observed_at": "2026-11-23T23:02:47Z",
+   "inplay": false
   }
  ],
  "runs": [
@@ -48629,6 +48866,35 @@
    },
    "quotes_by_market": {
     "HAD": 69,
+    "HDC": 0,
+    "HIL": 0
+   }
+  },
+  {
+   "time": "2026-11-23T23:03:52Z",
+   "requests": 5,
+   "matches_returned": 60,
+   "matches_with_odds": 26,
+   "quotes_received": 78,
+   "changes_saved": 12,
+   "partial": true,
+   "market_status": {
+    "HAD": {
+     "status": "ok",
+     "fixtures": 60,
+     "pools": 60
+    },
+    "HDC": {
+     "status": "error",
+     "http_status": 400
+    },
+    "HIL": {
+     "status": "error",
+     "http_status": 400
+    }
+   },
+   "quotes_by_market": {
+    "HAD": 78,
     "HDC": 0,
     "HIL": 0
    }
