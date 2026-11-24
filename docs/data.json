@@ -1,7 +1,7 @@
 {
  "schema_version": 2,
  "provider": "HKJC_GRAPHQL",
- "generated_at": "2026-11-24T19:47:32Z",
+ "generated_at": "2026-11-24T20:39:03Z",
  "matches": {
   "50080328": {
    "id": "50080328",
@@ -2838,7 +2838,7 @@
    "competition": "智利盃",
    "kickoff_utc": "2026-11-24T21:57:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080709": {
@@ -2849,7 +2849,7 @@
    "competition": "美國職業聯賽",
    "kickoff_utc": "2026-11-25T03:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080747": {
@@ -2860,7 +2860,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T09:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080864": {
@@ -2871,7 +2871,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T09:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080748": {
@@ -2882,7 +2882,7 @@
    "competition": "亞冠精英盃",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080749": {
@@ -2893,7 +2893,7 @@
    "competition": "亞冠精英盃",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080755": {
@@ -2904,7 +2904,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080758": {
@@ -2915,7 +2915,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080759": {
@@ -2926,7 +2926,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080760": {
@@ -2937,7 +2937,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080761": {
@@ -2948,7 +2948,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081159": {
@@ -2959,7 +2959,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080766": {
@@ -2970,7 +2970,7 @@
    "competition": "日本職業聯賽",
    "kickoff_utc": "2026-11-25T10:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081093": {
@@ -3003,7 +3003,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080753": {
@@ -3014,7 +3014,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080757": {
@@ -3025,7 +3025,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081173": {
@@ -3047,7 +3047,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080752": {
@@ -3058,7 +3058,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080863": {
@@ -3069,7 +3069,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080750": {
@@ -3080,7 +3080,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081172": {
@@ -3102,7 +3102,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-25T07:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080754": {
@@ -3113,7 +3113,7 @@
    "competition": "日本乙組聯賽",
    "kickoff_utc": "2026-11-25T10:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081124": {
@@ -3124,7 +3124,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-25T13:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081171": {
@@ -3135,7 +3135,7 @@
    "competition": "埃及超級聯賽",
    "kickoff_utc": "2026-11-25T15:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081155": {
@@ -3146,7 +3146,7 @@
    "competition": "俄羅斯盃",
    "kickoff_utc": "2026-11-25T15:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081126": {
@@ -3157,7 +3157,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-25T16:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081120": {
@@ -3168,7 +3168,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-25T16:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081156": {
@@ -3179,7 +3179,7 @@
    "competition": "俄羅斯盃",
    "kickoff_utc": "2026-11-25T17:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080175": {
@@ -3190,7 +3190,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080177": {
@@ -3201,7 +3201,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081125": {
@@ -3212,7 +3212,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-25T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080176": {
@@ -3223,7 +3223,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080181": {
@@ -3234,7 +3234,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080168": {
@@ -3245,7 +3245,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080173": {
@@ -3256,7 +3256,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080180": {
@@ -3267,7 +3267,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080169": {
@@ -3278,7 +3278,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081160": {
@@ -3289,7 +3289,7 @@
    "competition": "歐洲聯賽冠軍盃",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50079745": {
@@ -3300,7 +3300,7 @@
    "competition": "巴西甲組聯賽",
    "kickoff_utc": "2026-11-25T23:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081107": {
@@ -3311,7 +3311,7 @@
    "competition": "阿根廷甲組聯賽",
    "kickoff_utc": "2026-11-25T23:58:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081388": {
@@ -3322,7 +3322,7 @@
    "competition": "澳洲冠軍聯賽盃",
    "kickoff_utc": "2026-11-26T08:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081162": {
@@ -3333,7 +3333,7 @@
    "competition": "俄羅斯盃",
    "kickoff_utc": "2026-11-26T14:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T17:44:13Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081067": {
@@ -3344,7 +3344,7 @@
    "competition": "亞冠2",
    "kickoff_utc": "2026-11-25T16:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081128": {
@@ -3355,7 +3355,7 @@
    "competition": "俄羅斯盃",
    "kickoff_utc": "2026-11-25T17:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081170": {
@@ -3366,7 +3366,7 @@
    "competition": "埃及超級聯賽",
    "kickoff_utc": "2026-11-25T18:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081137": {
@@ -3377,7 +3377,7 @@
    "competition": "埃及超級聯賽",
    "kickoff_utc": "2026-11-25T18:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081119": {
@@ -3388,7 +3388,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-25T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081122": {
@@ -3399,7 +3399,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-25T19:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081123": {
@@ -3410,7 +3410,7 @@
    "competition": "英格蘭冠軍聯賽",
    "kickoff_utc": "2026-11-25T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-24T19:46:57Z",
+   "last_seen": "2026-11-24T20:38:28Z",
    "provider": "HKJC_GRAPHQL"
   }
  },
@@ -63441,6 +63441,40 @@
    "source_updated_at": "2026-11-23T11:30:02Z",
    "observed_at": "2026-11-24T19:46:57Z",
    "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50079626",
+   "market": "HDC",
+   "line_id": "2",
+   "condition": "-1.0",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "主隊勝",
+   "odds": 1.93,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T04:00:06Z",
+   "observed_at": "2026-11-24T20:38:28Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50079626",
+   "market": "HDC",
+   "line_id": "2",
+   "condition": "-1.0",
+   "is_main_line": true,
+   "selection": "A",
+   "selection_name": "客隊勝",
+   "odds": 1.83,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-23T04:00:06Z",
+   "observed_at": "2026-11-24T20:38:28Z",
+   "inplay": false
   }
  ],
  "runs": [
@@ -65112,6 +65146,36 @@
     "HAD": 87,
     "HDC": 0,
     "HIL": 176
+   }
+  },
+  {
+   "time": "2026-11-24T20:39:03Z",
+   "requests": 4,
+   "matches_returned": 58,
+   "matches_with_odds": 49,
+   "quotes_received": 148,
+   "changes_saved": 2,
+   "partial": true,
+   "market_status": {
+    "HAD": {
+     "status": "ok",
+     "fixtures": 60,
+     "pools": 60
+    },
+    "HDC": {
+     "status": "ok",
+     "fixtures": 50,
+     "pools": 48
+    },
+    "HIL": {
+     "status": "error",
+     "http_status": 400
+    }
+   },
+   "quotes_by_market": {
+    "HAD": 72,
+    "HDC": 76,
+    "HIL": 0
    }
   }
  ]
