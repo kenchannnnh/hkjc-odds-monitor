@@ -2,6 +2,11 @@ name: HKJC GraphQL odds monitor
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_only:
+        description: Publish the odds already saved on this branch
+        type: boolean
+        default: false
   schedule:
     - cron: '2-57/5 * * * *' # temporary development schedule, every 5 minutes
 
@@ -18,12 +23,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Install Python
+        if: ${{ !inputs.publish_only }}
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Collect public HKJC GraphQL odds
+        if: ${{ !inputs.publish_only }}
         run: python monitor.py
       - name: Commit public odds history and legacy archive
+        if: ${{ !inputs.publish_only }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
