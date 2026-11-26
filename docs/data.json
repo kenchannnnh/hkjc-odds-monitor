@@ -1,7 +1,7 @@
 {
  "schema_version": 2,
  "provider": "HKJC_GRAPHQL",
- "generated_at": "2026-11-25T23:16:28Z",
+ "generated_at": "2026-11-26T00:10:09Z",
  "matches": {
   "50080328": {
    "id": "50080328",
@@ -3553,7 +3553,7 @@
    "competition": "沙特職業聯賽",
    "kickoff_utc": "2026-11-26T17:30:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080253": {
@@ -3597,7 +3597,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080241": {
@@ -3608,7 +3608,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080244": {
@@ -3619,7 +3619,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081166": {
@@ -3630,7 +3630,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080238": {
@@ -3641,7 +3641,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080334": {
@@ -3663,7 +3663,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080332": {
@@ -3674,7 +3674,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080342": {
@@ -3685,7 +3685,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080343": {
@@ -3696,7 +3696,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081165": {
@@ -3707,7 +3707,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T17:45:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080252": {
@@ -3762,7 +3762,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080247": {
@@ -3773,7 +3773,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080251": {
@@ -3784,7 +3784,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081167": {
@@ -3795,7 +3795,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080243": {
@@ -3806,7 +3806,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080245": {
@@ -3817,7 +3817,7 @@
    "competition": "歐霸盃",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081413": {
@@ -3861,7 +3861,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080433": {
@@ -3872,7 +3872,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080336": {
@@ -3883,7 +3883,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080608": {
@@ -3894,7 +3894,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080339": {
@@ -3905,7 +3905,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081168": {
@@ -3916,7 +3916,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080337": {
@@ -3927,7 +3927,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50080341": {
@@ -3938,7 +3938,7 @@
    "competition": "歐洲協會聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   },
   "50081151": {
@@ -3949,7 +3949,7 @@
    "competition": "英格蘭甲組聯賽",
    "kickoff_utc": "2026-11-26T20:00:00Z",
    "status": "PREEVENT",
-   "last_seen": "2026-11-25T23:15:54Z",
+   "last_seen": "2026-11-26T00:09:05Z",
    "provider": "HKJC_GRAPHQL"
   }
  },
@@ -76526,6 +76526,40 @@
    "source_updated_at": "2026-11-24T11:30:02Z",
    "observed_at": "2026-11-25T23:15:54Z",
    "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080238",
+   "market": "HIL",
+   "line_id": "2",
+   "condition": "3.5",
+   "is_main_line": true,
+   "selection": "H",
+   "selection_name": "大",
+   "odds": 2.04,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-24T11:30:02Z",
+   "observed_at": "2026-11-26T00:09:05Z",
+   "inplay": false
+  },
+  {
+   "source": "HKJC_GRAPHQL",
+   "match_id": "50080238",
+   "market": "HIL",
+   "line_id": "2",
+   "condition": "3.5",
+   "is_main_line": true,
+   "selection": "L",
+   "selection_name": "細",
+   "odds": 1.69,
+   "pool_status": "SELLINGSTARTED",
+   "line_status": "AVAILABLE",
+   "selection_status": "AVAILABLE",
+   "source_updated_at": "2026-11-24T11:30:02Z",
+   "observed_at": "2026-11-26T00:09:05Z",
+   "inplay": false
   }
  ],
  "runs": [
@@ -78921,6 +78955,36 @@
     "HAD": 78,
     "HDC": 58,
     "HIL": 0
+   }
+  },
+  {
+   "time": "2026-11-26T00:10:09Z",
+   "requests": 5,
+   "matches_returned": 50,
+   "matches_with_odds": 26,
+   "quotes_received": 234,
+   "changes_saved": 2,
+   "partial": true,
+   "market_status": {
+    "HAD": {
+     "status": "ok",
+     "fixtures": 51,
+     "pools": 51
+    },
+    "HDC": {
+     "status": "error",
+     "http_status": 400
+    },
+    "HIL": {
+     "status": "ok",
+     "fixtures": 51,
+     "pools": 51
+    }
+   },
+   "quotes_by_market": {
+    "HAD": 78,
+    "HDC": 0,
+    "HIL": 156
    }
   }
  ]
